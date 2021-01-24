@@ -395,68 +395,17 @@ ggplot(porcentaje_typescall,aes(x="",y=Porcentaje, fill=Type_emergencia,))+
 
 ```
 
-
+EMS ha representa el 50,14% y le siguen Tráfico (34,69%) y Fuego (15,16%) .
 
 
 ```{r}
 
+#Documento utilizado para PowerBI
 write.csv(emergency_calls,file="emergency_call_PBI.csv")
   
   
 ```
-EMS ha representa el 50,14% y le siguen Tráfico (34,69%) y Fuego (15,16%) .
 
-
-
-```{r}
-
-#METODO SUPERVISADO
-
-# REGRESION LINEAL
-
-#En el eje x se representa el mes y e el eje y el numero de llamadas, se pretende encontrar una funcion que nos permita conocer o estimr el numero de llamasdas
-
-total_calls_per_month <- emergency_calls%>%
-   select(Date_Calls)%>%
-  filter(Date_Calls>= "2016-01-01" & Date_Calls<="2020-12-31")%>%
-  group_by(month=floor_date(Date_Calls, "month"))%>%
-  count()
-
-
-ggplot(total_calls_per_month, aes(x=month, y=n)) +
-  geom_point(colour = "red", size = 3) +
-    geom_path()
- 
-num_of_month <- matrix(1:55, nrow=55, ncol=1)
-num_of_month <- as.data.frame(num_of_month)
-
-
-
-aux <- cbind(num_of_month, total_calls_per_month)
-aux$month<- NULL
-aux
-
-plot(x=aux$V1, y=aux$n)
-
-#regresison lineal
-mylm <- lm(n ~ ., data = aux)
-
-mylm$coefficients
-  
-new <- aux[16,]
-predict(mylm, new)
-
-abline(mylm$coefficients, col="red")
-
-
-summary(mylm)
-
-```
-En base a la informacion obtenida por el metodo, se concluye que  no  se puede predecir elnumero de llamadas al 911 utilizando el metodo de regresion lineal, como se puede observar el valor de R^2 es lejano a 1 (mientras mas cercano a 1 mejor) y el valor de p-value es mucho mayor a 0.05 
-```{r}
-
-
-```
 
 
 ```{r}
@@ -473,36 +422,45 @@ total_calls_per_week <- emergency_calls%>%
   group_by(week=floor_date(Date_Calls, "week"))%>%
   count()
 
-
+#Grafico del numero de llamadas por semana
 ggplot(total_calls_per_week, aes(x=week, y=n)) +
   geom_point(colour = "red", size = 3) +
     geom_path()
  
+#Enumeracion de los meses
 num_of_week <- matrix(1:240, nrow=240, ncol=1)
-num_of_week <- as.data.frame(num_of_month)
+num_of_week <- as.data.frame(num_of_week)
 
-
-
+# Union del numero de mes con el data set total_call_per_week
 aux <- cbind(num_of_week, total_calls_per_week)
-aux$week<- NULL
-aux
+total_calls_per_week <- aux
+total_calls_per_week$week<- NULL
+total_calls_per_week
 
-plot(x=aux$V1, y=aux$n)
+#Separacion en training y test
+pcte <- sample(2, nrow(total_calls_per_week), replace = TRUE, prob = c(0.8,0.2))
+train_data_calls <- total_calls_per_week[pcte==1,]
+test_data_calls <- total_calls_per_week[pcte==2,]
 
-#regresison lineal
-mylm <- lm(n ~ ., data = aux)
+#Plot del numero de llamadas por semana desde Diciembre 2015 hasta Julio 2020
+plot(x=total_calls_per_week$V1, y=total_calls_per_week$n)
 
+#regresison lineal aplicada al training data
+mylm <- lm(n ~ ., data = train_data_calls)
 mylm$coefficients
-  
-new <- aux[16,]
+
+#Prediccion para la semana 69 (2017-04-16 => 2416 llamadas) 
+new <- test_data_calls[16,]
 predict(mylm, new)
 
 abline(mylm$coefficients, col="red")
 
-
+#Informacion sobre el metodo aplicado
 summary(mylm)
+
 ```
 
+En base a la informacion obtenida por el metodo, se concluye que  no  se puede predecir elnumero de llamadas al 911 utilizando el metodo de regresion lineal, como se puede observar el valor de R^2 es lejano a 1 (mientras mas cercano a 1 mejor) y el valor de p-value es mucho mayor a 0.05 
 
 
 
