@@ -9,7 +9,13 @@ output:
 ---
 INTRODUCCIÓN
 
-En este análisis supervisado  se utiliza un  dataset de las llamadas al 911 del condado de Montgomery en la Commonwealth of Pennsylvania. Los datos se recopilan desde el 12 de diciembre de 2015 hasta el 20 de Julio de 2020. 
+En este análisis supervisado  se utiliza un  dataset de las llamadas al 911 del condado de Montgomery en la Commonwealth of Pennsylvania[1]. Los datos se recopilan desde el 12 de diciembre de 2015 hasta el 20 de Julio de 2020. 
+
+Para este análisis de datos, hemos decidido utilizar las siguientes técnicas:
+- Regresión Lineal
+Se utiliza para estimar valores reales en función de variables continuas. Aquí, establecemos la relación entre variables independientes y dependientes ajustando una mejor línea
+- KNN
+Clasifica cada dato nuevo en el grupo que corresponda, según tenga k vecinos más cerca de un grupo o de otro. Es decir, calcula la distancia del elemento nuevo a cada uno de los existentes, y ordena dichas distancias de menor a mayor para ir seleccionando el grupo al que pertenecer. [3]
  
 
 ```{r}
@@ -26,22 +32,17 @@ library(caret)
 
 #Paquetes  investigados
 
-#********* paquetes para trabajar con Fechas *********
-#https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html
-#https://www.doctormetrics.com/lubridate-manipulando-fechas-en-r/
-#https://www.rdocumentation.org/packages/lubridate/versions/1.7.9.2
-#*****************************************************
 install.packages("lubridate")
 library(lubridate)    
 
 #Libreria tidyr
-library(tidyr)#https://rpubs.com/jaortega/151936  separar datos
+library(tidyr)
 
 #Libreria scales
-library(scales)# https://rpubs.com/luis_bolanos/537899  para manejar porcentajes
+library(scales)
 
 #
-install.packages("caTools")#https://www.rdocumentation.org/packages/sp/versions/1.4-5/topics/spsample
+install.packages("caTools")
 library(caTools)
 
 ```
@@ -105,11 +106,6 @@ num_filas <- dim(emergency_calls)
   count()%>%
   arrange(desc(n))
 
-# ******* pagina para el ggplot_bar - ggplot2 *******
-#https://www.r-graph-gallery.com/218-basic-barplots-with-ggplot2.html
-#https://rstudio-pubs-static.s3.amazonaws.com/345827_ef9eb854d51943ca9433ff814e1fdf2a.html
-#http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
-#****************************************************
 
 ggplot(total_call_per_month, aes(x=total_call_per_month$`month(Date_Calls)`, y=n)) +
   geom_bar(stat ="identity", fill="tomato3") +
@@ -355,30 +351,6 @@ print(paste("The type of accident with the most calls to 911: ", freqt.calls$`Ty
 ```
 
 
-```{r}
-#Utilizado para power BI
-accidentsEMS <- emergency_calls %>%
-  
-  filter(Types== "EMS")%>%
-   group_by(Subtypes) %>%
-  count()%>%
- arrange(desc(n))
-
-accidentsfire <- emergency_calls %>%
-  
-  filter(Types== "Fire")%>%
-   group_by(Subtypes) %>%
-  count()%>%
- arrange(desc(n))
-
-accidentsTraffic <- emergency_calls %>%
-  
-  filter(Types== "Traffic")%>%
-   group_by(Subtypes) %>%
-  count()%>%
- arrange(desc(n))
-
-```
 
 
 ```{r}
@@ -402,15 +374,6 @@ ggplot(porcentaje_typescall,aes(x="",y=Porcentaje, fill=Type_emergencia,))+
 ```
 
 EMS ha representa el 50,14% y le siguen Tráfico (34,69%) y Fuego (15,16%) .
-
-
-```{r}
-
-#Documento utilizado para PowerBI
-write.csv(emergency_calls,file="emergency_call_PBI.csv")
-  
-  
-```
 
 
 
@@ -456,9 +419,10 @@ plot(x=total_calls_per_week$V1, y=total_calls_per_week$n)
 mylm <- lm(n ~ ., data = train_data_calls)
 mylm$coefficients
 
-#Prediccion para la semana 69 (2017-04-16 => 2416 llamadas) 
+#Prediccion para la semana (revisar archivo aux)  
 new <- test_data_calls[16,]
-predict(mylm, new)
+prediccion <-  predict(mylm, new)
+prediccion
 
 abline(mylm$coefficients, col="red")
 
@@ -467,11 +431,11 @@ summary(mylm)
 
 ```
 
-En base a la informacion obtenida por el metodo, se concluye que  no  se puede predecir elnumero de llamadas al 911 utilizando el metodo de regresion lineal, como se puede observar el valor de R^2 es lejano a 1 (mientras mas cercano a 1 mejor) y el valor de p-value es mucho mayor a 0.05 
+ 
 
 ```{r}
 # KNN utilizando el paquete caret
-#https://www.rdocumentation.org/packages/caret/versions/6.0-86/topics/trainControl
+
 #
 set.seed(582)
 fitControl <- trainControl(
@@ -505,12 +469,68 @@ calls_knn <- train(n ~., total_calls_per_week,
 
 calls_knn
 plot(calls_knn)
+```
+
+
+```{r}
+
+#Utilizado para power BI
+
+write.csv(emergency_calls,file="emergency_call_PBI.csv")
+
+accidentsEMS <- emergency_calls %>%
+  
+  filter(Types== "EMS")%>%
+   group_by(Subtypes) %>%
+  count()%>%
+ arrange(desc(n))
+
+accidentsfire <- emergency_calls %>%
+  
+  filter(Types== "Fire")%>%
+   group_by(Subtypes) %>%
+  count()%>%
+ arrange(desc(n))
+
+accidentsTraffic <- emergency_calls %>%
+  
+  filter(Types== "Traffic")%>%
+   group_by(Subtypes) %>%
+  count()%>%
+ arrange(desc(n))
+
 
 ```
 
 
+CONCLUSIONES
+
+En base a la informacion obtenida por el metodo de Regresión Lineal se concluye que  no  se puede predecir el numero de llamadas semanales al 911, puesto que sus valores de R-squared:  0.002505,	y  p-value: 0.4882, valores que se encuentran lejanos al ideal cercano a 1 y menor a 0.05 repectivamente
+
+El método de KNN se ajusta de mejor manera a nuestros datos, puesto que su valor R-squared 0.2911661, es más cercano a 1.
+
+Los dos métodos utilizados no han proporcionado una adecuada predicción del numero de llamadas semanales, por lo que se deberia probar con otros métodos.
+
+
+
+
+BIBLIOGRAFIA
 
 [1] Dataset :  https://www.kaggle.com/mchirico/montcoalert
+[2] metodos: https://riptutorial.com/es/machine-learning/example/32209/regresion-lineal
+
+[3] lubridate :https://cran.r-project.org/web/packages/lubridate/vignettes/lubridate.html
+               https://www.doctormetrics.com/lubridate-manipulando-fechas-en-r/
+               https://www.rdocumentation.org/packages/lubridate/versions/1.7.9.2
+               
+[4]tidy:       https://rpubs.com/jaortega/151936
+[5]Escales:    https://rpubs.com/luis_bolanos/537899  para manejar porcentajes
+[6]Sample:     https://www.rdocumentation.org/packages/sp/versions/1.4-5/topics/spsample
+
+[6]ggplot-bar: https://www.r-graph-gallery.com/218-basic-barplots-with-ggplot2.html
+               https://rstudio-pubs-static.s3.amazonaws.com/345827_ef9eb854d51943ca9433ff814e1fdf2a.html
+               http://r-statistics.co/Top50-Ggplot2-Visualizations-MasterList-R-Code.html
+[7]caret:      https://www.rdocumentation.org/packages/caret/versions/6.0-86/topics/trainControl
 
 
 
