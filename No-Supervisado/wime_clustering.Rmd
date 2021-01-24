@@ -8,7 +8,7 @@ output: html_document
 
 INTRODUCCIÓN
 
-En este análisis no supervisado  se utiliza un  dataset de las variantes tintas del vino portugués "Vinho Verde", donde se desea optener grupos optimos a partir de las caracteristicas fisicas y quimicas
+En este análisis no supervisado  se utiliza un  dataset de las variantes tintas del vino portugués "Vinho"[1], donde se desea optener grupos optimos a partir de las caracteristicas fisicas y quimicas
 
 ## Introducción teórica
 
@@ -36,9 +36,9 @@ install.packages("cluster")
 library(cluster)
 library(corrplot)
 library(factoextra)
-library(mclust) # https://towardsdatascience.com/gaussian-mixture-models-d13a5e915c8e
+library(mclust) 
 library(FactoMineR)
-library(rattle) #https://rstudio-pubs-static.s3.amazonaws.com/317830_dde0f80173c047a2badbbe8918e95048.html
+library(rattle) 
 ```
 
 
@@ -50,8 +50,25 @@ library(rattle) #https://rstudio-pubs-static.s3.amazonaws.com/317830_dde0f80173c
 wine <- read.csv("winequality-red.csv")
 
 ```
+Atributos
 
-Se realiza la revision de la correlacion entre columnas para verificar cuales nos ayudaran a determinar de mejor manera la calidad de vino
+-fixed.acidity:       
+-Volatile.acidity:
+-Citric.acid:      
+-Residual.sugar:       
+-Chorides
+-Free.sulfr: 
+-Total.sulur:       
+-Density:      
+-Ph:         
+-Sulphates:         
+-Alcohol:         
+-Quality
+
+
+
+
+Se realiza la correlacion entre columnas para verificar cuales nos ayudaran a determinar de mejor manera la calidad de vino
 
 ```{r}
 #Empezamos el algoritmo observando las variables con un matrixplot:
@@ -151,4 +168,6 @@ seleccionamos el k-means como mejor algoritmo de clustering ....................
 
 [1] Dataset   =  https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009
 [2]Clustering =  https://conceptosclaros.com/que-es-clustering/
+[3] GMM       =  https://towardsdatascience.com/gaussian-mixture-models-d13a5e915c8e
+[4] Rattle    =  https://rstudio-pubs-static.s3.amazonaws.com/317830_dde0f80173c047a2badbbe8918e95048.html
 
