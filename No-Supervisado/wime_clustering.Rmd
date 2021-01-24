@@ -158,8 +158,10 @@ plot(gmm_wine, what = "classification")
 
 ```
 
+
 # CONCLUSION: 
-seleccionamos el k-means como mejor algoritmo de clustering .........................................
+
+El metodo GMM es el que mejor realiza el agrupamiento de las muestras, puesto que el metodo de K-means establece una fontera estricta para clasificar los datos  en los diferentes cluster, mientras que GMM evalua la probabilidad de cada muestra para pertenecer a un cluster.
 
 
 
