@@ -346,8 +346,31 @@ colnames(freqt.calls) <- c('Type_emergencia', 'Number_of_calls')
 
 #Tipo de accidente conmas llamadas
 print(paste("The type of accident with the most calls to 911: ", freqt.calls$`Type_emergencia`[1],"con",freqt.calls$`Number_of_calls`[1], "llamadas"))
+```
 
 
+```{r}
+#Utilizado para power BI
+accidentsEMS <- emergency_calls %>%
+  
+  filter(Types== "EMS")%>%
+   group_by(Subtypes) %>%
+  count()%>%
+ arrange(desc(n))
+
+accidentsfire <- emergency_calls %>%
+  
+  filter(Types== "Fire")%>%
+   group_by(Subtypes) %>%
+  count()%>%
+ arrange(desc(n))
+
+accidentsTraffic <- emergency_calls %>%
+  
+  filter(Types== "Traffic")%>%
+   group_by(Subtypes) %>%
+  count()%>%
+ arrange(desc(n))
 
 ```
 
