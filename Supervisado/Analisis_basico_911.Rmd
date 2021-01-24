@@ -21,6 +21,8 @@ install.packages("dplyr")
 library(dplyr)
 install.packages("ggplot2")
 library(ggplot2)
+install.packages("caret")
+library(caret)
 
 #Paquetes  investigados
 
@@ -37,6 +39,10 @@ library(tidyr)#https://rpubs.com/jaortega/151936  separar datos
 
 #Libreria scales
 library(scales)# https://rpubs.com/luis_bolanos/537899  para manejar porcentajes
+
+#
+install.packages("caTools")#https://www.rdocumentation.org/packages/sp/versions/1.4-5/topics/spsample
+library(caTools)
 
 ```
 
@@ -438,6 +444,7 @@ total_calls_per_week$week<- NULL
 total_calls_per_week
 
 #Separacion en training y test
+set.seed(4532)
 pcte <- sample(2, nrow(total_calls_per_week), replace = TRUE, prob = c(0.8,0.2))
 train_data_calls <- total_calls_per_week[pcte==1,]
 test_data_calls <- total_calls_per_week[pcte==2,]
@@ -462,6 +469,44 @@ summary(mylm)
 
 En base a la informacion obtenida por el metodo, se concluye que  no  se puede predecir elnumero de llamadas al 911 utilizando el metodo de regresion lineal, como se puede observar el valor de R^2 es lejano a 1 (mientras mas cercano a 1 mejor) y el valor de p-value es mucho mayor a 0.05 
 
+```{r}
+# KNN utilizando el paquete caret
+#https://www.rdocumentation.org/packages/caret/versions/6.0-86/topics/trainControl
+#
+set.seed(582)
+fitControl <- trainControl(
+              method = "cv", #Metodo utilizado cross-validation
+              number = 5) # numero de submuestras
+#Aplicamos la funcion train()
+calls_knn <- train(n ~., total_calls_per_week,
+                method = "knn",
+                trControl= fitControl)
+
+
+calls_knn
+plot(calls_knn)
+
+```
+```{r}
+# Se realizara con mas valores de K para apreciar de mejor manera la grfaica
+
+set.seed(582)
+valores <- expand.grid(k = seq(3, 15, 2)) 
+fitControl <- trainControl(
+              method = "cv", #Metodo utilizado cross-validation
+              number = 5) # numero de submuestras
+
+#Aplicamos la funcion train()
+calls_knn <- train(n ~., total_calls_per_week,
+                method = "knn",
+                trControl= fitControl,
+                tuneGrid = valores)
+
+
+calls_knn
+plot(calls_knn)
+
+```
 
 
 
