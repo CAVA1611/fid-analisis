@@ -95,7 +95,7 @@ Segun se observa en la grafica, exite una mayor correlacion para determinar la m
 
 
 ```{r}
-plot(x=wine$alcohol, y=wine$sulphates)
+plot(x=wine$sulphates, y=wine$alcohol)
 
 #Seleccion de las columnas alcohol y sulphates
 
@@ -123,8 +123,10 @@ plot(1:12, wss,type = "b", xlab = "# Cluster", ylab = "WSS")
 
 ```{r}
 #determinar el numero ideal de cluster grafica con el metodo "gap_stat"
-
-fviz_nbclust(wine_s_a, kmeans, method = "gap_stat")
+set.seed(678)
+fviz_nbclust(wine_s_a, kmeans, 
+             method = "gap_stat",
+             nboot = 50)
 
 ```
 
@@ -134,7 +136,7 @@ fviz_nbclust(wine_s_a, kmeans, method = "gap_stat")
 
 fviz_nbclust(wine_s_a, kmeans, method = "wss") +
     geom_vline(xintercept = 4, linetype = 2)+
-  labs(subtitle = "Elbow method")
+  labs(subtitle = "K")
 
 ```
 
