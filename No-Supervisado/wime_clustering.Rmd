@@ -133,7 +133,7 @@ fviz_nbclust(wine_s_a, kmeans,
 ```{r}
 
 #Verificacion del numero de k con la funcion fviz_nbclust de la libreria library(factoextra)
-
+set.seed(678)
 fviz_nbclust(wine_s_a, kmeans, method = "wss") +
     geom_vline(xintercept = 4, linetype = 2)+
   labs(subtitle = "K")
@@ -149,8 +149,13 @@ wine_clus <- kmeans(wine_s_a, center= 4, nstart = 20)
 plot(wine_s_a, col=wine_clus$cluster)
 points(wine_clus$centers, cex=2, col=12, pch=19)
 clusplot(wine_s_a, wine_clus$cluster, color=TRUE, shade=TRUE)
-eclust(wine_s_a, "kmeans", k = 4, nstart = 20, graph = TRUE)
 
+#Funcion eclust a modo de comparacion y verificacion con la funcion kmeans
+eclust(wine_s_a, "kmeans", graph = TRUE)
+
+#Verificacion del numero de k para el clustering - para probar retirar el comentario de las dos lineas de codigo
+#clust_e <- eclust(wine_s_a, "kmeans", graph = TRUE)
+#fviz_gap_stat(clust_e$gap_stat)
 ```
 
 
