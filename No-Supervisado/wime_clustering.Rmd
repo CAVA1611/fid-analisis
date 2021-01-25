@@ -1,16 +1,24 @@
 ---
-title: "No_Supervisado"
+title: "Analisis_No_Supervisado"
 author: "Belen Paredes y Cesar Velasco"
-date: "21/1/2021"
-output: html_document
+date: "25/01/2021"
+output:
+  html_document: default
+  pdf_document: default
+  word_document: default
+---
 
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+```
 
 INTRODUCCIÓN
 
-En este análisis no supervisado  se utiliza un  dataset de las variantes tintas del vino portugués "Vinho"[1], donde se desea optener grupos optimos a partir de las caracteristicas fisicas y quimicas
+En este análisis no supervisado  se utiliza un  dataset de las variantes tintas del vino portugués Vinho[1], donde se desea optener grupos optimos a partir de las caracteristicas fisicas y quimicas
 
-## Introducción teórica
+Introducción teórica
 
 El clustering es una tarea que tiene como finalidad principal lograr el agrupamiento de conjuntos de objetos no etiquetados, para lograr construir subconjuntos de datos conocidos como Clusters.  
 
@@ -19,9 +27,12 @@ Métodos de clusterización de datos a utilizar:
 K-means: también utiliza las distancias entre puntos. Y agrupo los clusters según lo cerca que están de los centros de gravedad de los clusters. A priori, tienes que saber cuántos clusters vas a crear para que el algoritmos sepa dónde colocar cada punto.
 Gaussian mixture models (GMM): utiliza modelos gaussianos o modelos de distribuciones normales de diferentes formas para que puedas crear grupos en forma de elipses. Para cada punto se le calcula la probabilidad de pertenencia a cada modelo gaussiano
 
----
+GIT: https://github.com/CAVA1611/fid-analisis
 
 ```{r}
+
+chooseCRANmirror(graphics=FALSE, ind=1)
+knitr::opts_chunk$set(echo = TRUE)
 
 #Paquetes vistos en clases
 
@@ -64,8 +75,6 @@ Atributos
 -Sulphates:         
 -Alcohol:         
 -Quality
-
-
 
 
 Se realiza la correlacion entre columnas para verificar cuales nos ayudaran a determinar de mejor manera la calidad de vino
@@ -119,12 +128,6 @@ fviz_nbclust(wine_s_a, kmeans, method = "gap_stat")
 
 ```
 
-
-
-
-
-
-
 ```{r}
 
 #Verificacion del numero de k con la funcion fviz_nbclust de la libreria library(factoextra)
@@ -149,7 +152,6 @@ eclust(wine_s_a, "kmeans", k = 4, nstart = 20, graph = TRUE)
 ```
 
 
-
 ```{r}
 # GMM
 gmm_wine = Mclust(wine_s_a, G = 4)
@@ -159,17 +161,23 @@ plot(gmm_wine, what = "classification")
 ```
 
 
-# CONCLUSION: 
+CONCLUSION: 
 
-El metodo GMM es el que mejor realiza el agrupamiento de las muestras, puesto que el metodo de K-means establece una fontera estricta para clasificar los datos  en los diferentes cluster, mientras que GMM evalua la probabilidad de cada muestra para pertenecer a un cluster.
+1. El metodo GMM es el que mejor realiza el agrupamiento de las muestras, puesto que el metodo de K-means establece una fontera estricta para clasificar los datos  en los diferentes cluster, mientras que GMM evalua la probabilidad de cada muestra para pertenecer a un cluster.
+
+2. Al agrupar en 4 cluster se podria clasificar al vino en calidad alta, moderada, baja y muy baja. 
 
 
 
 
-# Bibliografía
+
+Bibliografía
 
 [1] Dataset   =  https://www.kaggle.com/uciml/red-wine-quality-cortez-et-al-2009
+
 [2]Clustering =  https://conceptosclaros.com/que-es-clustering/
+
 [3] GMM       =  https://towardsdatascience.com/gaussian-mixture-models-d13a5e915c8e
+
 [4] Rattle    =  https://rstudio-pubs-static.s3.amazonaws.com/317830_dde0f80173c047a2badbbe8918e95048.html
 
