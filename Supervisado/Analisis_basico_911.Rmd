@@ -1,24 +1,38 @@
 ---
 title: "Analisis_911"
 author: "Cesar Velasco - Belen Paredes"
-date: "1/11/2021"
+date: "25/01/2021"
 output:
-  word_document: default
   pdf_document: default
   html_document: default
+  word_document: default
 ---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
 INTRODUCCIÓN
 
 En este análisis supervisado  se utiliza un  dataset de las llamadas al 911 del condado de Montgomery en la Commonwealth of Pennsylvania[1]. Los datos se recopilan desde el 12 de diciembre de 2015 hasta el 20 de Julio de 2020. 
 
 Para este análisis de datos, hemos decidido utilizar las siguientes técnicas:
+
 - Regresión Lineal
-Se utiliza para estimar valores reales en función de variables continuas. Aquí, establecemos la relación entre variables independientes y dependientes ajustando una mejor línea
+
+Se utiliza para estimar valores reales en función de variables continuas. Aquí, establecemos la relación entre variables independientes y dependientes ajustando una mejor línea.
+
 - KNN
+
 Clasifica cada dato nuevo en el grupo que corresponda, según tenga k vecinos más cerca de un grupo o de otro. Es decir, calcula la distancia del elemento nuevo a cada uno de los existentes, y ordena dichas distancias de menor a mayor para ir seleccionando el grupo al que pertenecer. [3]
+
+GIT: https://github.com/CAVA1611/fid-analisis
  
 
 ```{r}
+chooseCRANmirror(graphics=FALSE, ind=1)
+knitr::opts_chunk$set(echo = TRUE)
+
 #Instalacion paquetes y librerias
 
 #Paquetes vistos en clases
@@ -34,13 +48,10 @@ library(caret)
 
 install.packages("lubridate")
 library(lubridate)    
-
 #Libreria tidyr
 library(tidyr)
-
 #Libreria scales
 library(scales)
-
 #
 install.packages("caTools")
 library(caTools)
@@ -50,7 +61,9 @@ library(caTools)
 
 ```{r}
 #lectura del dataset 911.csv
-emergency_calls <- read.csv("911.csv")
+emergency_calls <- read.csv("/Volumes/T7/Spain/Sevilla/Fundamentos de Datos/envio de revision/FID-analisis-envio/fid-analisis/Supervisado/911.csv")
+
+#file.exists("/Volumes/T7/Spain/Sevilla/Fundamentos de Datos/envio de #revision/FID-analisis-envio/fid-analisis/Supervisado/911.csv")
 
 # Informacion del dataset
 dim(emergency_calls)
@@ -401,10 +414,11 @@ num_of_week <- matrix(1:240, nrow=240, ncol=1)
 num_of_week <- as.data.frame(num_of_week)
 
 # Union del numero de mes con el data set total_call_per_week
+# total_calls_per_week dataset numero de semana (v1) y numero de llamadas (n)
 aux <- cbind(num_of_week, total_calls_per_week)
 total_calls_per_week <- aux
 total_calls_per_week$week<- NULL
-total_calls_per_week
+
 
 #Separacion en training y test
 set.seed(4532)
@@ -446,11 +460,12 @@ calls_knn <- train(n ~., total_calls_per_week,
                 method = "knn",
                 trControl= fitControl)
 
-
 calls_knn
 plot(calls_knn)
 
 ```
+
+Para visualizar de mejor manera el valos de k.
 ```{r}
 # Se realizara con mas valores de K para apreciar de mejor manera la grfaica
 
@@ -499,7 +514,6 @@ accidentsTraffic <- emergency_calls %>%
   count()%>%
  arrange(desc(n))
 
-
 ```
 
 
@@ -511,6 +525,9 @@ El método de KNN se ajusta de mejor manera a nuestros datos, puesto que su valo
 
 Los dos métodos utilizados no han proporcionado una adecuada predicción del numero de llamadas semanales, por lo que se deberia probar con otros métodos.
 
+```{r}
+#######
+```
 
 
 
